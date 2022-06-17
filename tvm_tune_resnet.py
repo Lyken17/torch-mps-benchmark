@@ -40,6 +40,7 @@ def run_tuning(tasks, task_weights, log_file,
 
 from torchvision import models
 model = models.resnet50()
+model = model.features
 x = torch.randn(1, 3, 224, 224)
 ts = torch.jit.trace(model, x)
 
