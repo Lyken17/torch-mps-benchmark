@@ -12,7 +12,7 @@ pip install --pre torch torchvision --extra-index-url https://download.pytorch.o
 ```
 
 
-## Benchmark (m1 air)
+## Inference Benchmark (M1 Air)
 
 * Transformer
 
@@ -31,3 +31,23 @@ pip install --pre torch torchvision --extra-index-url https://download.pytorch.o
     2   | 78.2ms | 130.6ms
     4   | 137.6ms | 191.8ms
     8   | 279.1ms | 295.4ms
+
+## Training Benchmark (M1 Air)
+
+* Transformer (need to reduce the feat_sizes otherwise OOM)
+
+    bs  | cpu | mps
+    --- | --- | ---
+    1   | 77.2ms | Error
+    2   | 98.2ms | Error
+    4   | 162.5ms | Error
+    8   | 248.6ms | Error
+
+* ResNet-50 (need to reduce the num_classes otherwise OOM)
+
+    bs  | cpu | mps
+    --- | --- | ---
+    1   | 124.2ms | Error
+    2   | 234.0ms | Error
+    4   | 469.1ms | Error
+    8   | 866.7ms | Error

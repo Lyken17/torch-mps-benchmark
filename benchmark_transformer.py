@@ -11,7 +11,7 @@ net = nn.Transformer() # models.resnet50()
 
 
 
-def benchmark_cpu(net, data, target, device="cpu", repeats=200):
+def benchmark_cpu(net, data, target, device="cpu", repeats=200, backward=False):
     net = net.to(device)
     data = data.to(device)
     target = target.to(device)
@@ -21,13 +21,16 @@ def benchmark_cpu(net, data, target, device="cpu", repeats=200):
 
     start = time.time()
     for i in range(repeats):
-        net(data, target)
+        out = net(data, target)
+        if backward:
+            out.sum().backward()
 
     end = time.time() 
-    print(f"({device}, {data.shape})  Latency {(end - start) / repeats * 1000:.2f} ms")
+    print(f"({device}, {data.shape}, {backward})  Latency {(end - start) / repeats * 1000:.1f}ms")
 
-for bs in (1, 2, 4, 8):
-    data = torch.randn(bs, 32, 512)
-    target = torch.randn(bs, 32, 512)
-    benchmark_cpu(net, data, target, device="cpu")
-    benchmark_cpu(net, data, target, device="mps")
+for backward in (False, True):
+    for bs in (1, 2, 4, 8):
+        data = torch.randn(bs, 32, 512)
+        target = torch.randn(bs, 32, 512)
+        benchmark_cpu(net, data, target, device="cpu", backward=True)
+        benchmark_cpu(net, data, target, device="mps", backward=True)
